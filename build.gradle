@@ -1,0 +1,87 @@
+buildscript {
+    repositories {
+        jcenter()
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:2.0.4.RELEASE")
+    }
+}
+
+plugins {
+    id 'io.franzbecker.gradle-lombok' version '1.8'
+    id "org.flywaydb.flyway" version "5.1.4"
+}
+
+def version_cxf = '3.1.12'
+def version_tyrus = '1.12'
+def version_junit5 = "5.2.0"
+def version_junit5_runner = "1.2.0"
+def version_hamcrest = "2.0.0.0"
+def version_logstash_encoder = "5.1"
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
+bootJar {
+    baseName = 'gs-spring-boot'
+    version =  '0.1.0'
+}
+
+allprojects {
+    apply plugin: 'idea'
+    apply plugin: 'io.spring.dependency-management'
+
+    ext {
+        springBootVersion = '2.0.4.RELEASE'
+    }
+
+    lombok {
+        version = '1.18.2'
+        sha256 = ""
+    }
+
+    dependencyManagement {
+        imports {
+            mavenBom("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
+        }
+    }
+
+    repositories {
+        mavenCentral()
+    }
+
+    plugins.withType(JavaPlugin) {
+        dependencies {
+            testCompile "org.springframework.boot:spring-boot-starter-test"
+
+            testCompile "org.awaitility:awaitility:3.1.0"
+            testCompile "org.hamcrest:java-hamcrest:$version_hamcrest"
+            testCompile "org.hamcrest:hamcrest-junit:$version_hamcrest"
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-web'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-rest'
+
+    compile group: 'org.hibernate.validator', name: 'hibernate-validator', version: '6.0.12.Final'
+
+    compile group: 'org.flywaydb', name: 'flyway-core', version: '5.1.4'
+    compile group: 'org.postgresql', name: 'postgresql', version: '42.2.2'
+
+    testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test'
+}
